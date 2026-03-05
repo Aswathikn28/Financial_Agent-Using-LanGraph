@@ -182,35 +182,6 @@ http://127.0.0.1:5000
 
 ---
 
-## 🎯 Use Cases
-
-* AI + Finance portfolio project
-* Demonstration of Multi-Agent Systems
-* LLM + Real API Integration example
-* Fintech dashboard prototype
-* Resume-ready full-stack AI project
-
----
-
-## 🔐 Security Notes
-
-* API keys are stored in environment variables
-* `.gitignore` prevents sensitive files from being pushed
-* No credentials are exposed in code
-
----
-
-## 🚀 Future Enhancements
-
-* Portfolio tracking system
-* Multiple stock comparison
-* Technical indicators (RSI, MACD)
-* User authentication
-* Database integration
-* Cloud deployment (AWS / Render / Railway)
-
----
-
 ## 👩‍💻 Author
 
 Developed as an AI-powered financial analytics platform combining:
