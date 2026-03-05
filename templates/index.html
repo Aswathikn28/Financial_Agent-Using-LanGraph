@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AI Financial Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            transition: 0.3s;
+        }
+
+        body.dark {
+            background: linear-gradient(135deg, #141E30, #243B55);
+            color: white;
+        }
+
+        body.light {
+            background: #f5f5f5;
+            color: black;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        .card {
+            padding: 25px;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        input, button {
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            margin: 5px 0;
+        }
+
+        button {
+            cursor: pointer;
+            background: #00c6ff;
+            font-weight: bold;
+        }
+
+        .ratio-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .ratio {
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .spinner {
+            display: none;
+            text-align: center;
+        }
+
+        .toggle {
+            float: right;
+        }
+    </style>
+</head>
+
+<body class="dark">
+
+<div class="container">
+    <div class="card">
+        <h2>📊 AI Financial Intelligence Dashboard</h2>
+
+        <button class="toggle" onclick="toggleTheme()">🌙 / ☀</button>
+
+        <form method="POST" onsubmit="showSpinner()">
+            <input type="text" name="company" placeholder="Enter Stock (AAPL)" required>
+            <button type="submit">Analyze</button>
+        </form>
+
+        <div class="spinner" id="loading">
+            <p>🔄 Analyzing Financial Statements...</p>
+        </div>
+
+        {% if result %}
+            <h3>{{ result.company }}</h3>
+            <p>Risk Level: <strong>{{ result.risk_level }}</strong></p>
+
+            <!-- Ratio Cards -->
+            <div class="ratio-cards">
+                <div class="ratio">
+                    <h4>Debt / Equity</h4>
+                    <p>{{ ratios.debt_to_equity | round(2) }}</p>
+                </div>
+                <div class="ratio">
+                    <h4>Interest Coverage</h4>
+                    <p>{{ ratios.interest_coverage | round(2) }}</p>
+                </div>
+                <div class="ratio">
+                    <h4>Free Cash Flow</h4>
+                    <p>{{ ratios.free_cash_flow | round(0) }}</p>
+                </div>
+            </div>
+
+            <canvas id="stockChart"></canvas>
+            <canvas id="riskGauge"></canvas>
+
+            <h4>AI Advice</h4>
+            <p style="white-space: pre-line;">{{ result.advice }}</p>
+
+            <a href="/download-report">
+                <button>📄 Download PDF Report</button>
+            </a>
+        {% endif %}
+
+        {% if error %}
+            <p style="color:red;">{{ error }}</p>
+        {% endif %}
+    </div>
+</div>
+
+{% if chart_data %}
+<script>
+    const chartData = {{ chart_data | safe }};
+    const riskScore = {{ risk_score }};
+
+    new Chart(document.getElementById("stockChart"), {
+        type: "line",
+        data: {
+            labels: chartData.dates,
+            datasets: [
+                {
+                    label: "Close Price",
+                    data: chartData.prices,
+                    borderColor: "#00c6ff",
+                    tension: 0.3
+                },
+                {
+                    label: "MA 20",
+                    data: chartData.ma20,
+                    borderColor: "#ff9800",
+                    borderDash: [5,5],
+                    tension: 0.3
+                }
+            ]
+        }
+    });
+
+    new Chart(document.getElementById("riskGauge"), {
+        type: "doughnut",
+        data: {
+            datasets: [{
+                data: [riskScore, 100 - riskScore],
+                backgroundColor: ["#ff4d4d", "#00e676"]
+            }]
+        },
+        options: {
+            rotation: -90,
+            circumference: 180,
+            cutout: "70%"
+        }
+    });
+
+    function showSpinner() {
+        document.getElementById("loading").style.display = "block";
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle("dark");
+        document.body.classList.toggle("light");
+    }
+</script>
+{% endif %}
+
+</body>
+</html>
